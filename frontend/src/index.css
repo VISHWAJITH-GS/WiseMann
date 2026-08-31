@@ -1,0 +1,211 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base styles */
+@layer base {
+  * {
+    @apply box-border;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply m-0 p-0 bg-white text-text font-sans;
+    font-synthesis: none;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1 {
+    @apply text-4xl font-bold text-ink mb-6;
+  }
+
+  h2 {
+    @apply text-2xl font-bold text-ink mb-4;
+  }
+
+  h3 {
+    @apply text-xl font-semibold text-ink mb-3;
+  }
+
+  h4 {
+    @apply text-lg font-semibold text-ink mb-2;
+  }
+
+  p {
+    @apply m-0 leading-relaxed text-text-secondary;
+  }
+
+  code {
+    @apply font-mono text-sm bg-surface px-2 py-1 rounded text-ink;
+  }
+
+  button {
+    @apply cursor-pointer transition-all duration-200 ease-out;
+  }
+
+  input,
+  textarea,
+  select {
+    @apply rounded-lg border border-border px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all;
+  }
+
+  label {
+    @apply text-sm font-medium text-text mb-2 block;
+  }
+}
+
+/* Component styles */
+@layer components {
+  /* Primary Button */
+  .btn-primary {
+    @apply bg-black text-white px-4 py-2 rounded-lg font-medium hover:bg-ink focus:ring-2 focus:ring-offset-2 focus:ring-black active:scale-98 transition-all duration-200;
+  }
+
+  /* Secondary Button */
+  .btn-secondary {
+    @apply bg-white text-text border border-border px-4 py-2 rounded-lg font-medium hover:bg-surface focus:ring-2 focus:ring-offset-2 focus:ring-black active:scale-98 transition-all duration-200;
+  }
+
+  /* Danger Button */
+  .btn-danger {
+    @apply bg-danger text-white px-4 py-2 rounded-lg font-medium hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-danger active:scale-98 transition-all duration-200;
+  }
+
+  /* Card */
+  .card {
+    @apply bg-white border border-border rounded-xl p-6 shadow-md hover:shadow-lg transition-shadow duration-200;
+  }
+
+  /* Section */
+  .section {
+    @apply py-6 px-6;
+  }
+
+  /* Badge */
+  .badge {
+    @apply inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold;
+  }
+
+  .badge-success {
+    @apply badge bg-success-soft text-success;
+  }
+
+  .badge-warning {
+    @apply badge bg-warning-soft text-warning;
+  }
+
+  .badge-danger {
+    @apply badge bg-danger-soft text-danger;
+  }
+
+  .badge-info {
+    @apply badge bg-info-soft text-info;
+  }
+
+  .badge-ai {
+    @apply badge bg-ai-soft text-ai-primary;
+  }
+
+  /* Risk Indicator */
+  .risk-badge {
+    @apply inline-flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-semibold;
+  }
+
+  .risk-high {
+    @apply risk-badge bg-danger-soft text-danger;
+  }
+
+  .risk-medium {
+    @apply risk-badge bg-warning-soft text-warning;
+  }
+
+  .risk-low {
+    @apply risk-badge bg-success-soft text-success;
+  }
+
+  .risk-healthy {
+    @apply risk-badge bg-success-soft text-success;
+  }
+
+  /* Input Group */
+  .input-group {
+    @apply flex flex-col gap-2;
+  }
+
+  /* Form Row */
+  .form-row {
+    @apply grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  /* Data Table */
+  .data-table {
+    @apply w-full border-collapse bg-white rounded-lg overflow-hidden shadow-sm;
+  }
+
+  .data-table thead {
+    @apply bg-surface border-b border-border;
+  }
+
+  .data-table th {
+    @apply px-4 py-3 text-left text-sm font-semibold text-text;
+  }
+
+  .data-table td {
+    @apply px-4 py-3 text-sm text-text border-b border-border;
+  }
+
+  .data-table tbody tr:hover {
+    @apply bg-surface transition-colors;
+  }
+}
+
+/* Utilities */
+@layer utilities {
+  .scale-98 {
+    @apply scale-[0.98];
+  }
+
+  .truncate-line {
+    @apply overflow-hidden text-ellipsis whitespace-nowrap;
+  }
+
+  .line-clamp-2 {
+    @apply line-clamp-2;
+  }
+
+  .line-clamp-3 {
+    @apply line-clamp-3;
+  }
+
+  .flex-center {
+    @apply flex items-center justify-center;
+  }
+
+  .flex-between {
+    @apply flex items-center justify-between;
+  }
+
+  .gap-xs {
+    @apply gap-1;
+  }
+
+  .gap-sm {
+    @apply gap-2;
+  }
+
+  .gap-md {
+    @apply gap-4;
+  }
+
+  .gap-lg {
+    @apply gap-6;
+  }
+
+  .grid-col-auto {
+    @apply grid auto-cols-max;
+  }
+}
