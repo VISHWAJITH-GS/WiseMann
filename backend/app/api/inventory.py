@@ -22,3 +22,15 @@ def get_all_inventory(db: Session = Depends(get_db)):
         })
         
     return result
+
+@router.get("/{product_id}")
+def get_inventory_by_product(product_id: str, db: Session = Depends(get_db)):
+    inv = db.query(Inventory).filter(Inventory.product_id == product_id).first()
+    if not inv:
+        return {"error": "Inventory not found"}
+        
+    return {
+        "id": inv.id,
+        "productId": inv.product_id,
+        "quantity": inv.quantity
+    }
