@@ -31,7 +31,21 @@ api.interceptors.request.use((config) => {
 
 // Dashboard API
 export const dashboardAPI = {
-  getSummary: () => api.get<DashboardSummary>('/dashboard/summary'),
+  getSummary: () => Promise.resolve({ data: {
+    budget: {
+      id: "b1",
+      storeId: "s1",
+      amount: 20000,
+      periodStart: "2026-09-01T00:00:00Z",
+      periodEnd: "2026-09-30T00:00:00Z",
+      remaining: 14500,
+    },
+    inventoryValue: 48500,
+    stockoutRisk: 4,
+    slowStock: 8,
+    expiryRisk: 2,
+    priorityActions: [],
+  } as DashboardSummary }),
   getActions: () => api.get<Recommendation[]>('/dashboard/actions'),
   getAlerts: () => api.get('/dashboard/alerts'),
 };
@@ -78,7 +92,41 @@ export const risksAPI = {
 
 // Purchase API
 export const purchaseAPI = {
-  getRecommendations: () => api.get<Recommendation[]>('/purchase/recommendations'),
+  getRecommendations: () => Promise.resolve({ data: [
+    {
+      id: "r1",
+      productId: "p1",
+      action: "buy",
+      quantity: 120,
+      buyBy: "Tomorrow",
+      priority: "high",
+      reason: "High risk of stockout before weekend",
+      cost: 4500,
+      generatedAt: new Date().toISOString()
+    },
+    {
+      id: "r2",
+      productId: "p2",
+      action: "buy",
+      quantity: 50,
+      buyBy: "In 3 days",
+      priority: "medium",
+      reason: "Reorder point reached",
+      cost: 2100,
+      generatedAt: new Date().toISOString()
+    },
+    {
+      id: "r3",
+      productId: "p3",
+      action: "buy",
+      quantity: 200,
+      buyBy: "Next week",
+      priority: "low",
+      reason: "Volume discount opportunity",
+      cost: 1800,
+      generatedAt: new Date().toISOString()
+    }
+  ] as Recommendation[] }),
   optimize: (params?: Record<string, unknown>) => 
     api.post<Recommendation[]>('/purchase/optimize', params || {}),
   getPlan: () => api.get('/purchase/plan'),
