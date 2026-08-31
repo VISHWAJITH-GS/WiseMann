@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Search, Filter, Package } from 'lucide-react';
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button, DataTable, Input, RiskBadge } from '../../components/common';
-import { inventoryAPI, productsAPI } from '../../services/api';
-import { useAppStore } from '../../store/appStore';
-import type { Product, Inventory } from '../../types';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, Button, DataTable, Input, RiskBadge } from '../components/common';
+import { inventoryAPI, productsAPI } from '../services/api';
+import { useAppStore } from '../store/appStore';
+import type { Product, Inventory } from '../types';
 
 interface InventoryItem extends Product {
   inventory: Inventory;

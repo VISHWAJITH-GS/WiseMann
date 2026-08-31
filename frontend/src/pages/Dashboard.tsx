@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { AlertCircle, TrendingUp, Package, DollarSign, Clock } from 'lucide-react';
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, KPICard, Button, RiskBadge, DataTable } from '../../components/common';
-import { dashboardAPI, purchaseAPI, forecastAPI } from '../../services/api';
-import { useAppStore } from '../../store/appStore';
-import type { DashboardSummary, Recommendation } from '../../types';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, KPICard, Button, RiskBadge } from '../components/common';
+import { dashboardAPI, purchaseAPI } from '../services/api';
+import { useAppStore } from '../store/appStore';
+import type { DashboardSummary, Recommendation } from '../types';
 
 export default function Dashboard() {
   const { setIsLoading, isLoading, setError } = useAppStore();

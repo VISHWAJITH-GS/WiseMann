@@ -1,6 +1,6 @@
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button, DataTable } from '../../components/common';
-import { Users, Star } from 'lucide-react';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, Button, DataTable } from '../components/common';
+import { Users } from 'lucide-react';
 
 export default function Suppliers() {
   const suppliers = [

@@ -1,10 +1,10 @@
 import { useState, useEffect } from 'react';
 import { ShoppingCart, ChevronDown } from 'lucide-react';
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button, Badge, DataTable, RiskBadge } from '../../components/common';
-import { purchaseAPI, dashboardAPI } from '../../services/api';
-import { useAppStore } from '../../store/appStore';
-import type { Recommendation, Budget } from '../../types';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, Button, RiskBadge } from '../components/common';
+import { purchaseAPI, dashboardAPI } from '../services/api';
+import { useAppStore } from '../store/appStore';
+import type { Recommendation, Budget } from '../types';
 
 export default function PurchaseAdvisor() {
   const { setIsLoading, isLoading } = useAppStore();

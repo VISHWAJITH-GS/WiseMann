@@ -1,6 +1,5 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+@config "../tailwind.config.js";
 
 /* Base styles */
 @layer base {
@@ -91,23 +90,23 @@
   }
 
   .badge-success {
-    @apply badge bg-success-soft text-success;
+    @apply bg-success-soft text-success;
   }
 
   .badge-warning {
-    @apply badge bg-warning-soft text-warning;
+    @apply bg-warning-soft text-warning;
   }
 
   .badge-danger {
-    @apply badge bg-danger-soft text-danger;
+    @apply bg-danger-soft text-danger;
   }
 
   .badge-info {
-    @apply badge bg-info-soft text-info;
+    @apply bg-info-soft text-info;
   }
 
   .badge-ai {
-    @apply badge bg-ai-soft text-ai-primary;
+    @apply bg-ai-soft text-ai-primary;
   }
 
   /* Risk Indicator */
@@ -116,19 +115,19 @@
   }
 
   .risk-high {
-    @apply risk-badge bg-danger-soft text-danger;
+    @apply bg-danger-soft text-danger;
   }
 
   .risk-medium {
-    @apply risk-badge bg-warning-soft text-warning;
+    @apply bg-warning-soft text-warning;
   }
 
   .risk-low {
-    @apply risk-badge bg-success-soft text-success;
+    @apply bg-success-soft text-success;
   }
 
   .risk-healthy {
-    @apply risk-badge bg-success-soft text-success;
+    @apply bg-success-soft text-success;
   }
 
   /* Input Group */

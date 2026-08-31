@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef } from 'react';
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button, Input } from '../../components/common';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Button, Input } from '../components/common';
 import { Send, Lightbulb, MessageCircle } from 'lucide-react';
-import { aiAPI } from '../../services/api';
-import { useAppStore } from '../../store/appStore';
-import type { AIMessage } from '../../types';
+import { aiAPI } from '../services/api';
+import { useAppStore } from '../store/appStore';
+import type { AIMessage } from '../types';
 
 const suggestedQuestions = [
   'What should I buy today?',

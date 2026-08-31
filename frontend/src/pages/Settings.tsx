@@ -1,5 +1,5 @@
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button } from '../../components/common';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, Button } from '../components/common';
 import { Settings as SettingsIcon, Bell, Lock, User } from 'lucide-react';
 
 export default function Settings() {

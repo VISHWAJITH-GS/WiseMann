@@ -1,6 +1,6 @@
 import { useState } from 'react';
-import MainLayout from '../../components/layout/MainLayout.tsx';
-import { Card, Button, Input, KPICard } from '../../components/common';
+import MainLayout from '../components/layout/MainLayout.tsx';
+import { Card, Button, Input } from '../components/common';
 import { GitBranch, Zap } from 'lucide-react';
 
 export default function WhatIf() {
