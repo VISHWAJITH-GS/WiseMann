@@ -11,49 +11,47 @@ interface InventoryItem extends Product {
 }
 
 export default function Inventory() {
-  const { setIsLoading, isLoading } = useAppStore();
+  const { setIsLoading, isLoading, clearError } = useAppStore();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [riskFilter, setRiskFilter] = useState<string>('all');
 
+  const loadData = async () => {
+    try {
+      clearError();
+      setIsLoading(true);
+      const productsRes = await productsAPI.getAll();
+
+      const itemsWithInventory = await Promise.all(
+        productsRes.data.map(async (product) => {
+          try {
+            const invRes = await inventoryAPI.getByProductId(product.id);
+            return { ...product, inventory: invRes.data };
+          } catch {
+            return {
+              ...product,
+              inventory: {
+                currentStock: 0,
+                inventoryValue: 0,
+                daysOfStock: 0,
+                expiryRisk: false,
+              },
+            };
+          }
+        })
+      );
+
+      setItems(itemsWithInventory);
+      setFilteredItems(itemsWithInventory);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        const productsRes = await productsAPI.getAll();
-        
-        // Fetch inventory for each product
-        const itemsWithInventory = await Promise.all(
-          productsRes.data.map(async (product) => {
-            try {
-              const invRes = await inventoryAPI.getByProductId(product.id);
-              return { ...product, inventory: invRes.data };
-            } catch {
-              return {
-                ...product,
-                inventory: {
-                  currentStock: 0,
-                  inventoryValue: 0,
-                  daysOfStock: 0,
-                  expiryRisk: false,
-                },
-              };
-            }
-          })
-        );
-        
-        setItems(itemsWithInventory);
-        setFilteredItems(itemsWithInventory);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    
     loadData();
-  }, [setIsLoading]);
+  }, [setIsLoading, clearError]);
 
   useEffect(() => {
     let filtered = items;
@@ -96,7 +94,16 @@ export default function Inventory() {
   }));
 
   if (isLoading) {
-    return <MainLayout><div className="p-6">Loading...</div></MainLayout>;
+    return (
+      <MainLayout>
+        <div className="p-6 flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin inline-block w-8 h-8 border-4 border-border border-t-black rounded-full mb-4"></div>
+            <p className="text-text-secondary">Loading inventory...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
   }
 
   return (

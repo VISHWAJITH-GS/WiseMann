@@ -1,5 +1,9 @@
 import type { ReactNode } from 'react';
-import clsx from 'clsx';
+import { Button as ShadcnButton } from '../ui/button';
+import { Card as ShadcnCard } from '../ui/card';
+import { Badge as ShadcnBadge } from '../ui/badge';
+import { Input as ShadcnInput } from '../ui/input';
+import { cn } from '../../lib/utils';
 
 interface CardProps {
   children: ReactNode;
@@ -9,16 +13,12 @@ interface CardProps {
 
 export function Card({ children, className, onClick }: CardProps) {
   return (
-    <div
+    <ShadcnCard
       onClick={onClick}
-      className={clsx(
-        'card bg-white border border-border rounded-xl p-6 shadow-sm hover:shadow-md transition-shadow duration-200',
-        onClick && 'cursor-pointer',
-        className
-      )}
+      className={cn('h-full min-h-[160px] p-6 shadow-sm hover:shadow-md transition-shadow duration-200', onClick && 'cursor-pointer', className)}
     >
       {children}
-    </div>
+    </ShadcnCard>
   );
 }
 
@@ -43,32 +43,31 @@ export function Button({
   onClick,
   type = 'button',
 }: ButtonProps) {
-  const baseStyles =
-    'font-medium rounded-lg transition-all duration-200 inline-flex items-center justify-center gap-2 active:scale-98 disabled:opacity-50 disabled:cursor-not-allowed';
+  const variantMap = {
+    primary: 'default',
+    secondary: 'outline',
+    danger: 'destructive',
+    success: 'success',
+  } as const;
 
-  const variants = {
-    primary: 'bg-black text-white hover:bg-ink focus:ring-2 focus:ring-offset-2 focus:ring-black',
-    secondary: 'bg-white text-text border border-border hover:bg-surface focus:ring-2 focus:ring-offset-2 focus:ring-black',
-    danger: 'bg-danger text-white hover:bg-red-700 focus:ring-2 focus:ring-offset-2 focus:ring-danger',
-    success: 'bg-success text-white hover:bg-green-700 focus:ring-2 focus:ring-offset-2 focus:ring-success',
-  };
-
-  const sizes = {
-    sm: 'px-3 py-1.5 text-sm',
-    md: 'px-4 py-2.5 text-base',
-    lg: 'px-6 py-3 text-lg',
-  };
+  const sizeMap = {
+    sm: 'sm',
+    md: 'default',
+    lg: 'lg',
+  } as const;
 
   return (
-    <button
+    <ShadcnButton
       type={type}
+      variant={variantMap[variant]}
+      size={sizeMap[size]}
       disabled={disabled || loading}
       onClick={onClick}
-      className={clsx(baseStyles, variants[variant], sizes[size], className)}
+      className={cn('gap-2', className)}
     >
-      {loading && <span className="animate-spin">⏳</span>}
+      {loading && <span className="animate-spin text-base">⏳</span>}
       {children}
-    </button>
+    </ShadcnButton>
   );
 }
 
@@ -79,18 +78,18 @@ interface BadgeProps {
 }
 
 export function Badge({ children, variant = 'info', className }: BadgeProps) {
-  const variants = {
-    success: 'badge badge-success bg-success-soft text-success',
-    warning: 'badge badge-warning bg-warning-soft text-warning',
-    danger: 'badge badge-danger bg-danger-soft text-danger',
-    info: 'badge badge-info bg-info-soft text-info',
-    ai: 'badge badge-ai bg-ai-soft text-ai-primary',
-  };
+  const variantMap = {
+    success: 'success',
+    warning: 'warning',
+    danger: 'destructive',
+    info: 'info',
+    ai: 'secondary',
+  } as const;
 
   return (
-    <span className={clsx('inline-flex items-center justify-center px-3 py-1 rounded-full text-xs font-semibold', variants[variant], className)}>
+    <ShadcnBadge variant={variantMap[variant]} className={className}>
       {children}
-    </span>
+    </ShadcnBadge>
   );
 }
 
@@ -100,12 +99,12 @@ interface RiskBadgeProps {
 }
 
 export function RiskBadge({ risk, className }: RiskBadgeProps) {
-  const variants = {
-    high: 'bg-danger-soft text-danger',
-    medium: 'bg-warning-soft text-warning',
-    low: 'bg-info-soft text-info',
-    healthy: 'bg-success-soft text-success',
-  };
+  const variantMap = {
+    high: 'destructive',
+    medium: 'warning',
+    low: 'info',
+    healthy: 'success',
+  } as const;
 
   const labels = {
     high: 'High Risk',
@@ -115,9 +114,9 @@ export function RiskBadge({ risk, className }: RiskBadgeProps) {
   };
 
   return (
-    <span className={clsx('inline-flex items-center gap-1 px-3 py-1 rounded-lg text-sm font-semibold', variants[risk], className)}>
+    <ShadcnBadge variant={variantMap[risk]} className={cn('rounded-md px-2.5 py-1 text-xs', className)}>
       {labels[risk]}
-    </span>
+    </ShadcnBadge>
   );
 }
 
@@ -132,27 +131,30 @@ interface KPICardProps {
 
 export function KPICard({ label, value, unit, icon, trend, className }: KPICardProps) {
   return (
-    <Card className={className}>
-      <div className="flex items-start justify-between">
-        <div>
-          <p className="text-text-secondary text-sm mb-2">{label}</p>
-          <div className="flex items-baseline gap-2">
-            <span className="text-3xl font-bold text-ink">{value}</span>
-            {unit && <span className="text-text-muted text-sm">{unit}</span>}
+    <Card className={cn('flex flex-col justify-between', className)}>
+      <div className="flex items-start justify-between gap-4">
+        <div className="min-w-0 flex-1">
+          <p className="mb-3 text-sm font-medium text-slate-500">{label}</p>
+          <div className="flex items-end flex-wrap gap-2">
+            <span className="text-4xl font-black leading-none tracking-[-0.04em] text-slate-900">
+              {value}
+            </span>
+            {unit && <span className="pb-1 text-sm text-slate-500">{unit}</span>}
           </div>
-          {trend && (
-            <p
-              className={clsx(
-                'text-xs mt-2',
-                trend.direction === 'up' ? 'text-success' : 'text-danger'
-              )}
-            >
-              {trend.direction === 'up' ? '↑' : '↓'} {Math.abs(trend.value)}%
-            </p>
-          )}
         </div>
-        {icon && <div className="text-text-muted">{icon}</div>}
+        {icon && <div className="mt-1 flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600">{icon}</div>}
       </div>
+
+      {trend && (
+        <p
+          className={cn(
+            'mt-4 text-xs font-medium',
+            trend.direction === 'up' ? 'text-emerald-600' : 'text-red-600'
+          )}
+        >
+          {trend.direction === 'up' ? '↑' : '↓'} {Math.abs(trend.value)}%
+        </p>
+      )}
     </Card>
   );
 }
@@ -165,14 +167,14 @@ interface DataTableProps {
 
 export function DataTable({ columns, data, rowClassName }: DataTableProps) {
   return (
-    <div className="overflow-x-auto rounded-lg border border-border">
-      <table className="data-table w-full">
-        <thead className="bg-surface border-b border-border">
+    <div className="overflow-x-auto rounded-lg border border-slate-200">
+      <table className="w-full border-collapse bg-white">
+        <thead className="bg-slate-50 border-b border-slate-200">
           <tr>
             {columns.map((col) => (
               <th
                 key={col.key}
-                className="px-4 py-3 text-left text-sm font-semibold text-text"
+                className="px-4 py-3 text-left text-sm font-semibold text-slate-900"
                 style={{ width: col.width }}
               >
                 {col.label}
@@ -182,9 +184,9 @@ export function DataTable({ columns, data, rowClassName }: DataTableProps) {
         </thead>
         <tbody>
           {data.map((row, idx) => (
-            <tr key={idx} className={clsx('hover:bg-surface transition-colors', rowClassName)}>
+            <tr key={idx} className={cn('hover:bg-slate-50 transition-colors', rowClassName)}>
               {columns.map((col) => (
-                <td key={`${idx}-${col.key}`} className="px-4 py-3 text-sm text-text">
+                <td key={`${idx}-${col.key}`} className="px-4 py-3 text-sm text-slate-700">
                   {row[col.key]}
                 </td>
               ))}
@@ -223,30 +225,24 @@ export function Input({
 }: InputProps) {
   return (
     <div className="flex flex-col gap-2">
-      {label && <label className="text-sm font-medium text-text">{label}</label>}
+      {label && <label className="text-sm font-medium text-slate-900">{label}</label>}
       <div className="relative">
-        <input
+        <ShadcnInput
           type={type}
           placeholder={placeholder}
           value={value}
           onChange={(e) => onChange?.(e.target.value)}
           onKeyPress={onKeyPress}
           disabled={disabled}
-          className={clsx(
-            'rounded-lg border px-3 py-2 text-text focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent transition-all w-full',
-            error ? 'border-danger' : 'border-border',
-            disabled && 'bg-surface opacity-50 cursor-not-allowed',
-            icon && 'pr-9',
-            className
-          )}
+          className={cn(error ? 'border-red-500 focus-visible:ring-red-500' : '', icon && 'pr-9', className)}
         />
         {icon && (
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted pointer-events-none">
+          <div className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 pointer-events-none">
             {icon}
           </div>
         )}
       </div>
-      {error && <span className="text-xs text-danger">{error}</span>}
+      {error && <span className="text-xs text-red-600">{error}</span>}
     </div>
   );
 }

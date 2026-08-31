@@ -12,7 +12,9 @@ import {
   Menu,
   X,
 } from 'lucide-react';
+import { MagicWandIcon } from '@radix-ui/react-icons';
 import { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '../../store/appStore';
 
 const navItems = [
@@ -33,15 +35,20 @@ export default function Sidebar() {
   return (
     <>
       {/* Mobile Menu Button */}
-      <button
+      <motion.button
+        whileHover={{ scale: 1.04 }}
+        whileTap={{ scale: 0.96 }}
         onClick={() => setIsOpen(!isOpen)}
         className="fixed top-4 left-4 z-50 lg:hidden p-2 hover:bg-surface rounded-lg transition-colors"
       >
         {isOpen ? <X size={24} /> : <Menu size={24} />}
-      </button>
+      </motion.button>
 
       {/* Sidebar */}
-      <aside
+      <motion.aside
+        initial={{ x: -24, opacity: 0 }}
+        animate={{ x: 0, opacity: 1 }}
+        transition={{ duration: 0.25, ease: 'easeOut' }}
         className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-border transition-transform duration-300 z-40 lg:translate-x-0 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
@@ -49,8 +56,8 @@ export default function Sidebar() {
         {/* Logo Section */}
         <div className="p-6 border-b border-border">
           <div className="flex items-center gap-2 mb-2">
-            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">W</span>
+            <div className="w-8 h-8 bg-black rounded-lg flex items-center justify-center text-white shadow-sm">
+              <MagicWandIcon className="h-4 w-4" />
             </div>
             <h1 className="text-xl font-bold text-ink">WiseMann</h1>
           </div>
@@ -65,19 +72,24 @@ export default function Sidebar() {
             const Icon = item.icon;
             const isActive = location.pathname === item.href;
             return (
-              <Link
+              <motion.div
                 key={item.href}
-                to={item.href}
-                onClick={() => setIsOpen(false)}
-                className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
-                  isActive
-                    ? 'bg-black text-white'
-                    : 'text-text hover:bg-surface'
-                }`}
+                whileHover={{ x: 2 }}
+                whileTap={{ scale: 0.99 }}
               >
-                <Icon size={20} />
-                <span className="text-sm font-medium">{item.label}</span>
-              </Link>
+                <Link
+                  to={item.href}
+                  onClick={() => setIsOpen(false)}
+                  className={`flex items-center gap-3 px-4 py-2.5 rounded-lg transition-all duration-200 ${
+                    isActive
+                      ? 'bg-black text-white'
+                      : 'text-text hover:bg-surface'
+                  }`}
+                >
+                  <Icon size={20} />
+                  <span className="text-sm font-medium">{item.label}</span>
+                </Link>
+              </motion.div>
             );
           })}
         </nav>
@@ -96,15 +108,21 @@ export default function Sidebar() {
             <span className="text-sm font-medium">Logout</span>
           </button>
         </div>
-      </aside>
+      </motion.aside>
 
       {/* Mobile Overlay */}
-      {isOpen && (
-        <div
-          className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
-          onClick={() => setIsOpen(false)}
-        />
-      )}
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.2 }}
+            className="fixed inset-0 bg-black bg-opacity-50 z-30 lg:hidden"
+            onClick={() => setIsOpen(false)}
+          />
+        )}
+      </AnimatePresence>
     </>
   );
 }

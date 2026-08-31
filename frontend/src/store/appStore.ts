@@ -28,6 +28,7 @@ interface AppState {
   setRecommendations: (recommendations: Recommendation[]) => void;
   setIsLoading: (loading: boolean) => void;
   setError: (error: string | null) => void;
+  clearError: () => void;
   setSelectedProductId: (id: string | null) => void;
   setDataFreshness: (freshness: string) => void;
   addAIMessage: (message: AIMessage) => void;
@@ -54,6 +55,7 @@ export const useAppStore = create<AppState>((set) => ({
   setRecommendations: (recommendations) => set({ recommendations }),
   setIsLoading: (loading) => set({ isLoading: loading }),
   setError: (error) => set({ error }),
+  clearError: () => set({ error: null }),
   setSelectedProductId: (id) => set({ selectedProductId: id }),
   setDataFreshness: (freshness) => set({ dataFreshness: freshness }),
   addAIMessage: (message) => 

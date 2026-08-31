@@ -7,30 +7,30 @@ import { useAppStore } from '../store/appStore';
 import type { Recommendation, Budget } from '../types';
 
 export default function PurchaseAdvisor() {
-  const { setIsLoading, isLoading } = useAppStore();
+  const { setIsLoading, isLoading, clearError } = useAppStore();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [budget, setBudget] = useState<Budget | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
 
+  const loadData = async () => {
+    try {
+      clearError();
+      setIsLoading(true);
+      const [recsRes, summaryRes] = await Promise.all([
+        purchaseAPI.getRecommendations(),
+        dashboardAPI.getSummary(),
+      ]);
+      setRecommendations(recsRes.data);
+      setBudget(summaryRes.data.budget);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setIsLoading(true);
-        const [recsRes, summaryRes] = await Promise.all([
-          purchaseAPI.getRecommendations(),
-          dashboardAPI.getSummary(),
-        ]);
-        setRecommendations(recsRes.data);
-        setBudget(summaryRes.data.budget);
-      } catch (err) {
-        console.error(err);
-      } finally {
-        setIsLoading(false);
-      }
-    };
     loadData();
-  }, [setIsLoading]);
+  }, [setIsLoading, clearError]);
 
   const totalRecommendedSpend = recommendations.reduce((acc, r) => acc + r.cost, 0);
   const budgetExceeded = totalRecommendedSpend > (budget?.amount || 0);
@@ -46,7 +46,16 @@ export default function PurchaseAdvisor() {
   };
 
   if (isLoading) {
-    return <MainLayout><div className="p-6">Loading...</div></MainLayout>;
+    return (
+      <MainLayout>
+        <div className="p-6 flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin inline-block w-8 h-8 border-4 border-border border-t-black rounded-full mb-4"></div>
+            <p className="text-text-secondary">Loading purchase advice...</p>
+          </div>
+        </div>
+      </MainLayout>
+    );
   }
 
   return (
