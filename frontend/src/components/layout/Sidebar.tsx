@@ -1,4 +1,4 @@
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import {
   LayoutDashboard,
   ShoppingCart,
@@ -30,6 +30,7 @@ const navItems = [
 export default function Sidebar() {
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
+  const navigate = useNavigate();
   const { currentStore } = useAppStore();
 
   return (
@@ -49,7 +50,7 @@ export default function Sidebar() {
         initial={{ x: -24, opacity: 0 }}
         animate={{ x: 0, opacity: 1 }}
         transition={{ duration: 0.25, ease: 'easeOut' }}
-        className={`fixed left-0 top-0 h-screen w-64 bg-white border-r border-border transition-transform duration-300 z-40 lg:translate-x-0 ${
+        className={`fixed left-0 top-0 z-40 h-screen w-[min(18rem,calc(100vw-2rem))] border-r border-border bg-white transition-transform duration-300 lg:translate-x-0 lg:w-64 ${
           isOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
@@ -103,7 +104,7 @@ export default function Sidebar() {
             <Settings size={20} />
             <span className="text-sm font-medium">Settings</span>
           </Link>
-          <button className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-danger hover:bg-danger-soft transition-colors">
+          <button onClick={() => { localStorage.removeItem('auth_token'); navigate('/'); }} className="w-full flex items-center gap-3 px-4 py-2.5 rounded-lg text-danger hover:bg-danger-soft transition-colors">
             <LogOut size={20} />
             <span className="text-sm font-medium">Logout</span>
           </button>

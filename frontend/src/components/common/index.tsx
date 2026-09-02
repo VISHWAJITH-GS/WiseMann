@@ -15,7 +15,11 @@ export function Card({ children, className, onClick }: CardProps) {
   return (
     <ShadcnCard
       onClick={onClick}
-      className={cn('h-full min-h-[160px] p-6 shadow-sm hover:shadow-md transition-shadow duration-200', onClick && 'cursor-pointer', className)}
+      className={cn(
+        'h-full min-h-0 p-4 shadow-sm transition-all duration-200 motion-safe:hover:-translate-y-0.5 motion-safe:hover:shadow-md sm:p-6',
+        onClick && 'cursor-pointer active:scale-[0.99]',
+        className
+      )}
     >
       {children}
     </ShadcnCard>
@@ -63,7 +67,7 @@ export function Button({
       size={sizeMap[size]}
       disabled={disabled || loading}
       onClick={onClick}
-      className={cn('gap-2', className)}
+      className={cn('min-h-10 gap-2 active:scale-[0.98] motion-safe:hover:-translate-y-px', className)}
     >
       {loading && <span className="animate-spin text-base">⏳</span>}
       {children}

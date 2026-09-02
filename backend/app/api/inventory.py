@@ -32,5 +32,9 @@ def get_inventory_by_product(product_id: str, db: Session = Depends(get_db)):
     return {
         "id": inv.id,
         "productId": inv.product_id,
-        "quantity": inv.quantity
+        "quantity": inv.quantity,
+        "currentStock": inv.quantity,
+        "inventoryValue": 0,
+        "daysOfStock": 0,
+        "expiryRisk": False,
     }

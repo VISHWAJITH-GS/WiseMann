@@ -19,7 +19,8 @@ def get_purchase_recommendations(db: Session = Depends(get_db)):
             {
                 "id": "1", "productId": "p1", "quantity": 50, 
                 "reason": "High demand predicted", "priority": "high", 
-                "type": "reorder", "confidence": 0.9, "estimatedCost": 1000
+                "type": "reorder", "confidence": 0.9, "cost": 1000,
+                "buyBy": None
             }
         ]
         
@@ -35,7 +36,8 @@ def get_purchase_recommendations(db: Session = Depends(get_db)):
             "priority": r["priority"].lower(),
             "type": "reorder",
             "confidence": 0.8,
-            "estimatedCost": r["order_value"]
+            "cost": r["order_value"],
+            "buyBy": r["buy_by"]
         })
         
     return formatted

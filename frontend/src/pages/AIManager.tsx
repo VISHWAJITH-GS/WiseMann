@@ -82,7 +82,7 @@ export default function AIStoreManager() {
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-4xl mx-auto h-screen flex flex-col">
+      <div className="mx-auto flex min-h-[calc(100vh-4rem)] w-full max-w-4xl flex-col p-4 sm:p-6 lg:min-h-screen">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-3xl font-bold text-ink mb-2 flex items-center gap-2">
@@ -93,7 +93,7 @@ export default function AIStoreManager() {
         </div>
 
         {/* Chat Area */}
-        <div className="flex-1 bg-surface rounded-xl p-6 mb-6 overflow-y-auto">
+        <div className="mb-6 min-h-[22rem] flex-1 overflow-y-auto rounded-xl bg-surface p-4 sm:p-6">
           {aiMessages.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center">
               <Lightbulb size={48} className="text-ai-primary mb-4 opacity-50" />

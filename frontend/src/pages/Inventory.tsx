@@ -11,11 +11,13 @@ interface InventoryItem extends Product {
 }
 
 export default function Inventory() {
-  const { setIsLoading, isLoading, clearError } = useAppStore();
+  const { setIsLoading, isLoading, error, setError, clearError } = useAppStore();
   const [items, setItems] = useState<InventoryItem[]>([]);
   const [filteredItems, setFilteredItems] = useState<InventoryItem[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [riskFilter, setRiskFilter] = useState<string>('all');
+  const [showCategories, setShowCategories] = useState(false);
+  const [categoryFilter, setCategoryFilter] = useState('all');
 
   const loadData = async () => {
     try {
@@ -44,6 +46,8 @@ export default function Inventory() {
 
       setItems(itemsWithInventory);
       setFilteredItems(itemsWithInventory);
+    } catch {
+      setError('Unable to load inventory. Confirm the backend is running on port 8000.');
     } finally {
       setIsLoading(false);
     }
@@ -51,7 +55,7 @@ export default function Inventory() {
 
   useEffect(() => {
     loadData();
-  }, [setIsLoading, clearError]);
+  }, [setIsLoading, setError, clearError]);
 
   useEffect(() => {
     let filtered = items;
@@ -71,9 +75,10 @@ export default function Inventory() {
         return item.inventory.daysOfStock >= 7;
       });
     }
+    if (categoryFilter !== 'all') filtered = filtered.filter((item) => item.categoryId === categoryFilter);
     
     setFilteredItems(filtered);
-  }, [searchTerm, riskFilter, items]);
+  }, [searchTerm, riskFilter, categoryFilter, items]);
 
   const columns = [
     { key: 'name', label: 'Product' },
@@ -108,12 +113,14 @@ export default function Inventory() {
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-ink mb-2">Inventory</h1>
+          <h1 className="mb-2 text-2xl font-bold text-ink sm:text-3xl">Inventory</h1>
           <p className="text-text-secondary">Monitor stock levels and identify risks.</p>
         </div>
+
+        {error && <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
 
         {/* Search and Filters */}
         <Card className="mb-8">
@@ -134,10 +141,11 @@ export default function Inventory() {
               <option value="medium">Medium Risk</option>
               <option value="low">Low Risk</option>
             </select>
-            <Button variant="secondary" className="flex items-center gap-2">
+            <Button variant="secondary" onClick={() => setShowCategories(!showCategories)} className="flex w-full items-center gap-2 md:w-auto">
               <Filter size={18} />
               More Filters
             </Button>
+            {showCategories && <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} className="rounded-lg border border-border px-3 py-2"><option value="all">All categories</option>{[...new Set(items.map((item) => item.categoryId))].map((category) => <option key={category} value={category}>{category}</option>)}</select>}
           </div>
         </Card>
 

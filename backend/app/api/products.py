@@ -13,6 +13,8 @@ def get_all_products(db: Session = Depends(get_db)):
     for p in products:
         result.append({
             "id": p.id,
+            "storeId": p.store_id,
+            "categoryId": p.category_id,
             "name": p.name,
             "sku": p.sku,
             "unit": p.unit,
@@ -29,6 +31,8 @@ def get_product(id: str, db: Session = Depends(get_db)):
         return {"error": "Product not found"}
     return {
         "id": p.id,
+        "storeId": p.store_id,
+        "categoryId": p.category_id,
         "name": p.name,
         "sku": p.sku,
         "unit": p.unit,

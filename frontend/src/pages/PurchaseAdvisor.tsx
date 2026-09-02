@@ -7,11 +7,12 @@ import { useAppStore } from '../store/appStore';
 import type { Recommendation, Budget } from '../types';
 
 export default function PurchaseAdvisor() {
-  const { setIsLoading, isLoading, clearError } = useAppStore();
+  const { setIsLoading, isLoading, error, setError, clearError } = useAppStore();
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
   const [budget, setBudget] = useState<Budget | null>(null);
   const [expandedId, setExpandedId] = useState<string | null>(null);
   const [selectedItems, setSelectedItems] = useState<Set<string>>(new Set());
+  const [notice, setNotice] = useState('');
 
   const loadData = async () => {
     try {
@@ -23,6 +24,8 @@ export default function PurchaseAdvisor() {
       ]);
       setRecommendations(recsRes.data);
       setBudget(summaryRes.data.budget);
+    } catch {
+      setError('Unable to load purchase advice. Confirm the backend is running on port 8000.');
     } finally {
       setIsLoading(false);
     }
@@ -30,7 +33,7 @@ export default function PurchaseAdvisor() {
 
   useEffect(() => {
     loadData();
-  }, [setIsLoading, clearError]);
+  }, [setIsLoading, setError, clearError]);
 
   const totalRecommendedSpend = recommendations.reduce((acc, r) => acc + r.cost, 0);
   const budgetExceeded = totalRecommendedSpend > (budget?.amount || 0);
@@ -43,6 +46,16 @@ export default function PurchaseAdvisor() {
       newSelected.add(id);
     }
     setSelectedItems(newSelected);
+  };
+
+  const addToPlan = (ids: string[]) => {
+    const toAdd = ids.filter((id) => !selectedItems.has(id));
+    setSelectedItems(new Set([...selectedItems, ...toAdd]));
+    setNotice(`${ids.length} recommendation${ids.length === 1 ? '' : 's'} added to the purchase plan.`);
+  };
+
+  const viewEvidence = (rec: Recommendation) => {
+    setNotice(`${rec.productName || 'This product'}: ${rec.reason} (high-confidence recommendation).`);
   };
 
   if (isLoading) {
@@ -60,12 +73,15 @@ export default function PurchaseAdvisor() {
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-ink mb-2">Purchase Advisor</h1>
+          <h1 className="mb-2 text-2xl font-bold text-ink sm:text-3xl">Purchase Advisor</h1>
           <p className="text-text-secondary">AI-powered recommendations optimized for your budget and risk.</p>
         </div>
+
+        {error && <div className="mb-6 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-700">{error}</div>}
+        {notice && <div className="mb-6 rounded-lg border border-info bg-info-soft p-4 text-sm text-info" role="status">{notice}</div>}
 
         {/* Budget Summary */}
         <Card className="mb-8">
@@ -104,9 +120,9 @@ export default function PurchaseAdvisor() {
                 <div key={rec.id} className="border border-border rounded-lg">
                   <button
                     onClick={() => setExpandedId(expandedId === rec.id ? null : rec.id)}
-                    className="w-full p-4 flex items-center justify-between hover:bg-surface transition-colors"
+                    className="flex w-full items-start justify-between gap-3 p-3 text-left transition-colors hover:bg-surface sm:items-center sm:p-4"
                   >
-                    <div className="flex items-center gap-4 flex-1 text-left">
+                    <div className="flex min-w-0 flex-1 items-start gap-3 text-left sm:items-center sm:gap-4">
                       <input
                         type="checkbox"
                         checked={selectedItems.has(rec.id)}
@@ -115,16 +131,16 @@ export default function PurchaseAdvisor() {
                         onClick={(e) => e.stopPropagation()}
                       />
                       <div>
-                        <p className="font-medium text-text">Product #{rec.id}</p>
-                        <p className="text-sm text-text-secondary">{rec.reason}</p>
+                        <p className="font-medium text-text">{rec.productName || `Product #${rec.id}`}</p>
+                        <p className="text-sm text-text-secondary line-clamp-2">{rec.reason}</p>
                       </div>
                     </div>
-                    <div className="flex items-center gap-4">
+                    <div className="flex shrink-0 items-center gap-2 sm:gap-4">
                       <div className="text-right">
                         <p className="font-semibold text-ink">{rec.quantity} units</p>
                         <p className="text-sm text-text-muted">₹{rec.cost.toLocaleString()}</p>
                       </div>
-                      <RiskBadge risk={rec.priority === 'high' ? 'high' : rec.priority === 'medium' ? 'medium' : 'low'} />
+                      <div className="hidden sm:block"><RiskBadge risk={rec.priority === 'high' ? 'high' : rec.priority === 'medium' ? 'medium' : 'low'} /></div>
                       <ChevronDown
                         size={20}
                         className={`transition-transform ${expandedId === rec.id ? 'rotate-180' : ''}`}
@@ -153,8 +169,8 @@ export default function PurchaseAdvisor() {
                         </div>
                       </div>
                       <div className="flex gap-2">
-                        <Button variant="primary" size="sm">Add to Purchase Plan</Button>
-                        <Button variant="secondary" size="sm">View Evidence</Button>
+                        <Button variant="primary" size="sm" onClick={() => addToPlan([rec.id])}>Add to Purchase Plan</Button>
+                        <Button variant="secondary" size="sm" onClick={() => viewEvidence(rec)}>View Evidence</Button>
                       </div>
                     </div>
                   )}
@@ -164,12 +180,12 @@ export default function PurchaseAdvisor() {
           </div>
 
           {/* Action Buttons */}
-          <div className="flex gap-3 pt-6 border-t border-border">
-            <Button variant="primary" disabled={selectedItems.size === 0}>
+          <div className="flex flex-col gap-3 border-t border-border pt-6 sm:flex-row">
+            <Button variant="primary" disabled={selectedItems.size === 0} className="w-full sm:w-auto" onClick={() => setNotice(`${selectedItems.size} item${selectedItems.size === 1 ? '' : 's'} are ready to order.`)}>
               <ShoppingCart size={18} />
               Add {selectedItems.size > 0 ? `${selectedItems.size} Items` : 'to Purchase Plan'}
             </Button>
-            <Button variant="secondary">
+            <Button variant="secondary" className="w-full sm:w-auto" onClick={() => setNotice(`${recommendations.length - selectedItems.size} unselected recommendation${recommendations.length - selectedItems.size === 1 ? '' : 's'} remain deferred.`)}>
               View Deferred Items ({recommendations.length - selectedItems.size})
             </Button>
           </div>

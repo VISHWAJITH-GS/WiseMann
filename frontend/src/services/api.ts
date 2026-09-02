@@ -65,7 +65,7 @@ export const salesAPI = {
 
 // Forecast API
 export const forecastAPI = {
-  getByProductId: (productId: string) => api.get<Forecast>(`/forecast/${productId}`),
+  getByProductId: (productId: string, horizon = 7) => api.get<Forecast>(`/forecast/${productId}?horizon=${horizon}`),
   generate: () => api.post('/forecast/generate', {}),
   regenerate: (productId: string) => api.post(`/forecast/${productId}/regenerate`, {}),
 };

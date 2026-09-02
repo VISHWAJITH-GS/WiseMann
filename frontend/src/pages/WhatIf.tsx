@@ -2,6 +2,8 @@ import { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout.tsx';
 import { Card, Button, Input } from '../components/common';
 import { GitBranch, Zap } from 'lucide-react';
+import { scenariosAPI } from '../services/api';
+import type { ScenarioOutput } from '../types';
 
 export default function WhatIf() {
   const [scenarioName, setScenarioName] = useState('Budget Reduction');
@@ -16,16 +18,33 @@ export default function WhatIf() {
     purchases: 8,
   };
 
-  const scenarioMetrics = {
+  const [scenarioMetrics, setScenarioMetrics] = useState({
     spend: 9800,
     stockout: 4,
     excess: 22000,
     purchases: 5,
+  });
+  const [loading, setLoading] = useState(false);
+  const [notice, setNotice] = useState('');
+
+  const runScenario = async () => {
+    setLoading(true); setNotice('');
+    try {
+      const { data }: { data: ScenarioOutput } = await scenariosAPI.simulate({ scenario: scenarioName, budget, demandChange: demand, supplierPrice });
+      setScenarioMetrics({ spend: data.recommendedSpend, stockout: data.stockoutCount, excess: data.excessStockValue, purchases: Math.max(1, Math.round(data.recommendedSpend / 2500)) });
+      setNotice(`“${scenarioName || 'Untitled scenario'}” simulated successfully.`);
+    } catch { setNotice('Unable to run the scenario. Confirm the backend is running on port 8000.'); }
+    finally { setLoading(false); }
+  };
+
+  const exportReport = () => {
+    const report = [`Scenario: ${scenarioName}`, `Budget: ₹${budget}`, `Demand change: ${demand}%`, `Supplier price change: ${supplierPrice}%`, '', `Recommended spend: ₹${scenarioMetrics.spend}`, `Stockout risk: ${scenarioMetrics.stockout} products`, `Excess stock value: ₹${scenarioMetrics.excess}`].join('\n');
+    const link = document.createElement('a'); link.href = URL.createObjectURL(new Blob([report], { type: 'text/plain' })); link.download = `${scenarioName || 'scenario'}-report.txt`; link.click(); URL.revokeObjectURL(link.href);
   };
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-ink mb-2">What-if Analysis</h1>
           <p className="text-text-secondary">Simulate different scenarios without affecting live data.</p>
@@ -104,10 +123,11 @@ export default function WhatIf() {
                 </div>
               </div>
 
-              <Button variant="primary" className="w-full gap-2">
+              <Button variant="primary" className="w-full gap-2" onClick={runScenario} loading={loading}>
                 <Zap size={18} />
                 Run Scenario
               </Button>
+              {notice && <p className="text-sm text-text-secondary" role="status">{notice}</p>}
             </div>
           </Card>
 
@@ -183,7 +203,7 @@ export default function WhatIf() {
 
         {/* Export */}
         <div className="text-center">
-          <Button variant="secondary">Export Scenario Report</Button>
+          <Button variant="secondary" onClick={exportReport}>Export Scenario Report</Button>
         </div>
       </div>
     </MainLayout>

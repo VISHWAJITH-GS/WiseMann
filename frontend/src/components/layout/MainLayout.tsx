@@ -7,10 +7,10 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className="flex h-screen bg-white">
+    <div className="flex min-h-screen bg-white">
       <Sidebar />
-      <main className="flex-1 lg:ml-64 overflow-auto">
-        <div className="w-full h-full">
+      <main className="min-w-0 flex-1 overflow-auto lg:ml-64">
+        <div className="min-h-screen w-full pt-16 lg:pt-0">
           {children}
         </div>
       </main>

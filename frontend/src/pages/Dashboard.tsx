@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { AlertCircle, TrendingUp, Package, DollarSign, Clock } from 'lucide-react';
 import { MagicButton } from '@dotdo/magicui/button';
@@ -23,6 +24,7 @@ import { useAppStore } from '../store/appStore';
 import type { DashboardSummary, Recommendation } from '../types';
 
 export default function Dashboard() {
+  const navigate = useNavigate();
   const { setIsLoading, isLoading, clearError } = useAppStore();
   const [summary, setSummary] = useState<DashboardSummary | null>(null);
   const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
@@ -84,11 +86,11 @@ export default function Dashboard() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="relative p-6 max-w-7xl mx-auto"
+          className="relative mx-auto w-full max-w-7xl p-4 sm:p-6"
         >
           {/* Header */}
           <div className="mb-8">
-            <h1 className="mb-2 text-4xl font-black tracking-[-0.06em] text-black md:text-5xl">
+            <h1 className="mb-2 text-3xl font-black tracking-[-0.06em] text-black sm:text-4xl md:text-5xl">
               <Text
                 variant="aurora"
                 colors={['#000000', '#111827', '#374151']}
@@ -156,7 +158,7 @@ export default function Dashboard() {
 
         {/* Alert Section */}
         {stockoutRisk > 0 && (
-          <div className="mb-8 p-4 rounded-lg bg-danger-soft border border-danger flex gap-4">
+          <div className="mb-8 flex items-start gap-3 rounded-lg border border-danger bg-danger-soft p-4 sm:gap-4">
             <AlertCircle className="text-danger flex-shrink-0" size={24} />
             <div>
               <h3 className="font-semibold text-danger mb-1">Immediate Action Required</h3>
@@ -174,7 +176,7 @@ export default function Dashboard() {
               <Card>
                 <div className="flex items-center justify-between mb-4">
                   <h2 className="text-xl font-bold text-ink">Priority Actions</h2>
-                  <Button variant="secondary" size="sm">View All</Button>
+                  <Button variant="secondary" size="sm" onClick={() => navigate('/purchase-advisor')}>View All</Button>
                 </div>
 
                 {recommendations.length > 0 ? (
@@ -185,15 +187,15 @@ export default function Dashboard() {
                         initial={{ opacity: 0, x: -6 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: index * 0.04, duration: 0.2 }}
-                        className="flex items-center justify-between p-3 bg-surface rounded-lg"
+                        className="flex flex-col items-start justify-between gap-3 rounded-lg bg-surface p-3 sm:flex-row sm:items-center"
                       >
                         <div>
                           <p className="font-medium text-text">{rec.quantity} units needed</p>
                           <p className="text-xs text-text-muted">{rec.reason}</p>
                         </div>
-                        <div className="flex items-center gap-3">
+                        <div className="flex w-full items-center justify-between gap-3 sm:w-auto sm:justify-end">
                           <RiskBadge risk={rec.priority === 'high' ? 'high' : rec.priority === 'medium' ? 'medium' : 'low'} />
-                          <MagicButton variant="rainbow" className="h-9 px-4 text-xs rounded-lg">
+                          <MagicButton onClick={() => navigate('/purchase-advisor')} variant="rainbow" className="h-9 px-4 text-xs rounded-lg">
                             View
                           </MagicButton>
                         </div>
@@ -223,7 +225,7 @@ export default function Dashboard() {
                 <span className="text-text-secondary text-sm">Reorder Soon</span>
                 <span className="font-semibold">3</span>
               </div>
-              <MagicButton variant="shimmer" className="mt-4 w-full rounded-lg">
+              <MagicButton onClick={() => navigate('/inventory')} variant="shimmer" className="mt-4 w-full rounded-lg">
                 View Inventory
               </MagicButton>
             </div>

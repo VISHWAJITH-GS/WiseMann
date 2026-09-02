@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import MainLayout from '../components/layout/MainLayout.tsx';
 import { Card, Button, DataTable } from '../components/common';
 import { Users } from 'lucide-react';
@@ -29,6 +30,7 @@ export default function Suppliers() {
       status: 'Active',
     },
   ];
+  const [selectedSupplier, setSelectedSupplier] = useState<typeof suppliers[0] | null>(null);
 
   const columns = [
     { key: 'name', label: 'Supplier', width: '25%' },
@@ -55,12 +57,12 @@ export default function Suppliers() {
         <span className="text-sm">{supplier.reliability}</span>
       </div>
     ),
-    action: <Button variant="secondary" size="sm">View</Button>,
+    action: <Button variant="secondary" size="sm" onClick={() => setSelectedSupplier(supplier)}>View</Button>,
   }));
 
   return (
     <MainLayout>
-      <div className="p-6 max-w-7xl mx-auto">
+      <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-ink mb-2">Suppliers</h1>
           <p className="text-text-secondary">Compare suppliers by price, lead time, and reliability.</p>
@@ -96,6 +98,7 @@ export default function Suppliers() {
         <Card>
           <h2 className="text-xl font-bold text-ink mb-6">Supplier Comparison</h2>
           <DataTable columns={columns} data={tableData} />
+          {selectedSupplier && <div className="mt-6 rounded-lg border border-border bg-surface p-4" role="dialog"><div className="flex items-start justify-between gap-4"><div><h3 className="font-bold text-ink">{selectedSupplier.name}</h3><p className="mt-1 text-sm text-text-secondary">Contact: {selectedSupplier.contact}</p><p className="text-sm text-text-secondary">Price: {selectedSupplier.price} · Lead time: {selectedSupplier.lead_time} · Reliability: {selectedSupplier.reliability}</p></div><Button variant="secondary" size="sm" onClick={() => setSelectedSupplier(null)}>Close</Button></div></div>}
         </Card>
       </div>
     </MainLayout>

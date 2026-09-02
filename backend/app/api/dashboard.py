@@ -31,9 +31,14 @@ def get_dashboard_summary(db: Session = Depends(get_db)):
 
     return {
         "budget": {
+            "id": budget.id if budget else "default",
+            "storeId": store_id,
+            "amount": budget.amount if budget else 20000,
             "total": budget.amount if budget else 20000,
             "used": (budget.amount - budget.remaining) if budget else 8500,
-            "remaining": budget.remaining if budget else 11500
+            "remaining": budget.remaining if budget else 11500,
+            "periodStart": budget.period_start.isoformat() if budget else "",
+            "periodEnd": budget.period_end.isoformat() if budget else ""
         },
         "inventoryValue": total_inventory_value or 45200,
         "stockoutRisk": stockout_risk_count or 12,
